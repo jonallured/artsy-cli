@@ -22,9 +22,7 @@ class Gravity {
   static authUrl() {
     const params = new URLSearchParams()
 
-    const clientId = process.env.CLIENT_ID as string
-
-    params.append("client_id", clientId)
+    params.append("client_id", Config.gravityId())
     params.append("redirect_uri", `http://127.0.0.1:${Gravity.REDIRECT_PORT}`)
     params.append("response_type", "code")
 
@@ -36,11 +34,8 @@ class Gravity {
     const accessTokenUrl = Gravity.urls.access_token
     const params = new URLSearchParams()
 
-    const clientId = process.env.CLIENT_ID as string
-    const clientSecret = process.env.CLIENT_SECRET as string
-
-    params.append("client_id", clientId)
-    params.append("client_secret", clientSecret)
+    params.append("client_id", Config.gravityId())
+    params.append("client_secret", Config.gravitySecret())
     params.append("code", code)
     params.append("grant_type", "authorization_code")
     params.append("scope", "offline_access")
