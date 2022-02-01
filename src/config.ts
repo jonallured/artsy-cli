@@ -15,9 +15,13 @@ export const Config = {
     }
   },
   readToken: (): string => {
-    return fs.readFileSync(Config.path(), { encoding: "utf-8" })
+    const data = fs.readFileSync(Config.path(), { encoding: "utf-8" })
+    const options = JSON.parse(data)
+    return options.accessToken
   },
   writeToken: (token: string): void => {
-    fs.writeFileSync(Config.path(), token)
+    const options = { accessToken: token }
+    const data = JSON.stringify(options)
+    fs.writeFileSync(Config.path(), data)
   },
 }
