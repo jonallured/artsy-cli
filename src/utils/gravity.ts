@@ -19,24 +19,29 @@ class Gravity {
     callback: `http://127.0.0.1:${Gravity.REDIRECT_PORT}`,
   }
 
-  async getAccessToken(credentials: Credentials) {
-    const gravityUrl = Gravity.urls.access_token
-    const body: AccessTokenRequest = {
-      client_id: process.env.CLIENT_ID!,
-      client_secret: process.env.CLIENT_SECRET!,
-      grant_type: "credentials",
-      ...credentials,
-    }
+  static async getAccessToken(code: string) {
+    const accessTokenUrl = Gravity.urls.access_token
+    const params = new URLSearchParams()
 
-    const response = await fetch(gravityUrl, {
-      method: "post",
-      body: JSON.stringify(body),
-      headers: { "Content-Type": "application/json" },
+    const clientId = process.env.CLIENT_ID as string
+    const clientSecret = process.env.CLIENT_SECRET as string
+
+    params.append("client_id", clientId)
+    params.append("client_secret", clientSecret)
+    params.append("code", code)
+    params.append("grant_type", "authorization_code")
+    params.append("scope", "offline_access")
+
+    const response = await fetch(accessTokenUrl, {
+      body: params,
+      method: "POST",
     })
 
-    const json = await response.json()
+    if (!response.ok) throw `${response.status} ${response.statusText}`
 
-    return json as AccessTokenResponse
+    const data = await response.json()
+
+    return data
   }
 
   async get(endpoint: string) {
